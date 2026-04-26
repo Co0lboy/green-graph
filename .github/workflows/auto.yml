@@ -3,17 +3,29 @@ name: Auto Commit
 on:
   schedule:
     - cron: "0 18 * * *"
+  workflow_dispatch:
 
 jobs:
   commit:
     runs-on: ubuntu-latest
+
+    permissions:
+      contents: write   # ✅ REQUIRED
+
     steps:
-      - uses: actions/checkout@v3
-      - name: Commit
+      - name: Checkout repo
+        uses: actions/checkout@v4   # ✅ updated
+
+      - name: Make changes
         run: |
           echo "update $(date)" >> log.txt
-          git config user.name "YOUR_USERNAME"
-          git config user.email "your-email@gmail.com"
+
+      - name: Commit and push
+        run: |
+          git config user.name "Co0lboy"
+          git config user.email "pawarani002@gmail.com"
+
           git add .
-          git commit -m "daily update"
+          git commit -m "daily update" || echo "No changes"
+
           git push
