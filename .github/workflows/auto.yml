@@ -15,12 +15,27 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - run: echo "update $(date)" >> log.txt
+      - name: Generate realistic commits
+        run: |
+          DAY=$(date +%u)
 
-      - run: |
+          if [ $DAY -ge 6 ]; then
+            commits=$((RANDOM % 6 + 3))
+          else
+            commits=$((RANDOM % 5 + 1))
+          fi
+
+          for i in $(seq 1 $commits); do
+            echo "update $(date) $i" >> log.txt
+          done
+
+      - name: Commit and push
+        run: |
           git config user.name "Co0lboy"
-          git config user.email "YOUR_REAL_EMAIL@gmail.com"
+          git config user.email "pawarani002@gmail.com"
+
           git add .
-          git commit -m "daily update" || echo "no changes"
-          git pull origin main --rebase
+          git commit -m "auto update $(date)" || echo "no changes"
+
+          git pull origin main --rebase || true
           git push
