@@ -15,8 +15,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Generate realistic commits
+      - name: Generate random commits
         run: |
+
           DAY=$(date +%u)
 
           if [ $DAY -ge 6 ]; then
@@ -25,17 +26,18 @@ jobs:
             commits=$((RANDOM % 5 + 1))
           fi
 
-          for i in $(seq 1 $commits); do
-            echo "update $(date) $i" >> log.txt
-          done
-
-      - name: Commit and push
-        run: |
           git config user.name "Co0lboy"
           git config user.email "pawarani002@gmail.com"
 
-          git add .
-          git commit -m "auto update $(date)" || echo "no changes"
+          for i in $(seq 1 $commits)
+          do
+            echo "update $(date '+%Y-%m-%d %H:%M:%S') $RANDOM" >> log.txt
+
+            git add log.txt
+            git commit -m "update $i"
+
+            sleep $((RANDOM % 15 + 5))
+          done
 
           git pull origin main --rebase || true
           git push
